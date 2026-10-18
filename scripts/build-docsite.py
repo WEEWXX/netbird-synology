@@ -13,7 +13,7 @@ COPY={
 IDS=['overview','install','connect','help']
 def esc(value):return html.escape(str(value),quote=True)
 def paragraphs(text):
- return ''.join('<p>'+esc(p.strip())+'</p>' for p in text.split('\n\n') if p.strip() and not p.lstrip().startswith(('[English]','[GitHub','- x86','- ARM','[Issues]')))
+ return ''.join('<p>'+esc(p.strip())+'</p>' for p in text.split('\n\n') if p.strip() and not p.lstrip().startswith(('[','- x86','- ARM')))
 def build(root,assets,out,repo,base):
  out.mkdir(parents=True,exist_ok=True)
  versions=set()
