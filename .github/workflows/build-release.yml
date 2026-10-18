@@ -119,7 +119,7 @@ jobs:
           else
             gh release create "$TAG" \
               --title "${TAG}_synology" \
-              --notes "Built from netbirdio/netbird v${UPSTREAM}" \
+              --notes-file docs/releases/${TAG}.md \
               netbird_*_synology_*.spk
           fi
 
@@ -252,7 +252,7 @@ jobs:
           <h1><img src="icon-256.png" alt="">NetBird DSM Package Source</h1>
           <div class="notice">
             <strong>&#9888;&#65039; Testing / beta fork</strong>
-            This site hosts a <strong>testing fork</strong> of the NetBird DSM package, used to validate the build, packaging, and update-delivery pipeline before any of it lands in an official NetBird-maintained channel. The Package Source URLs below point at this fork's GitHub Pages deployment. See <a href="https://github.com/$REPO#testing--validation">Testing &amp; Validation</a> in the repository README for what's been verified, what hasn't, and how to report issues.
+            This site hosts a <strong>testing fork</strong> of the NetBird DSM package, used to validate the build, packaging, and update-delivery pipeline before any of it lands in an official NetBird-maintained channel. The Package Source URLs below point at this fork's GitHub Pages deployment. See <a href="https://github.com/$REPO/blob/main/docs/validation-v1.md">Testing &amp; Validation</a> in the repository README for what's been verified, what hasn't, and how to report issues.
           </div>
           <p>Synology DSM 7.0+ package source for the <a href="https://netbird.io">NetBird</a> client. Add the URL matching your NAS architecture in <strong>Package Center &rarr; Settings &rarr; Package Sources</strong> to receive automatic updates.</p>
 
@@ -280,7 +280,6 @@ jobs:
           <ol>
             <li>Open <strong>Package Center</strong> on your Synology DSM.</li>
             <li>Open <strong>Settings &rarr; Package Sources</strong>, click <strong>Add</strong>, give it any name, and paste the URL for your arch as the Location.</li>
-            <li>Open <strong>Settings &rarr; General</strong> and set <strong>Trust Level</strong> to <strong>Any publisher</strong>.</li>
             <li>NetBird will appear under the <strong>Community</strong> tab in Package Center.</li>
           </ol>
 

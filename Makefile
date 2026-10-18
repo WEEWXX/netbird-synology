@@ -9,7 +9,7 @@
 CORE_VERSION ?= $(shell cat VERSION)
 REVISION ?= $(shell cat REVISION)
 VERSION ?= $(CORE_VERSION)-$(REVISION)
-UPDATE_REPOSITORY ?=
+UPDATE_REPOSITORY ?= WEEWXX/netbird-synology
 NODE ?= node
 
 # Architecture (defaults: x86_64 / amd64). NETBIRD_ARCH is auto-derived from
