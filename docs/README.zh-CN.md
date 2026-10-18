@@ -1,5 +1,7 @@
 # 群晖 NetBird 客户端
 
+[在线文档](https://weewxx.github.io/netbird-synology/zh-CN/)
+
 [English](../README.md) · 简体中文 · [繁體中文](README.zh-TW.md) · [Deutsch](README.de.md) · [Français](README.fr.md) · [日本語](README.ja.md)
 
 社区维护的非官方套件，基于 TechHutTV/netbird-dsm 提交 5efc24c。官方核心为 0.81.2，套件版本为 0.81.2-2。本项目独立于群晖和 NetBird。

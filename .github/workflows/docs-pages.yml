@@ -1,0 +1,48 @@
+name: Publish multilingual documentation
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'README.md'
+      - 'docs/**'
+      - 'site/**'
+      - 'scripts/build-docsite.py'
+      - 'tests/test_docsite.py'
+      - '.github/workflows/docs-pages.yml'
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: docs-pages
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v6
+      - name: Test documentation builder
+        run: |
+          python3 -B -m unittest discover -s tests -p test_docsite.py
+          node --check site/docs.js
+      - name: Download current release packages
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p assets
+          gh release download --repo "$GITHUB_REPOSITORY" --pattern '*.spk' --dir assets
+      - uses: actions/configure-pages@v6
+        id: pages
+      - name: Build documentation and retain package catalogs
+        env:
+          BASE_URL: ${{ steps.pages.outputs.base_url }}
+        run: python3 scripts/build-docsite.py --assets assets --output _site --repository "$GITHUB_REPOSITORY" --base-url "$BASE_URL"
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: _site
+      - uses: actions/deploy-pages@v5
+        id: deploy

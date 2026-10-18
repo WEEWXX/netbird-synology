@@ -1,5 +1,7 @@
 # Synology 向け NetBird
 
+[オンラインドキュメント](https://weewxx.github.io/netbird-synology/ja/)
+
 [English](../README.md) · [简体中文](README.zh-CN.md) · [繁體中文](README.zh-TW.md) · [Deutsch](README.de.md) · [Français](README.fr.md) · 日本語
 
 TechHutTV/netbird-dsm のコミット 5efc24c を基に、コミュニティが保守する非公式パッケージです。NetBird 本体は 0.81.2、パッケージは 0.81.2-2 です。Synology および NetBird の公式プロジェクトではありません。

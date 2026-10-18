@@ -1,5 +1,7 @@
 # Synology NetBird 用戶端
 
+[線上文件](https://weewxx.github.io/netbird-synology/zh-TW/)
+
 [English](../README.md) · [简体中文](README.zh-CN.md) · 繁體中文 · [Deutsch](README.de.md) · [Français](README.fr.md) · [日本語](README.ja.md)
 
 由社群維護的非官方套件，基於 TechHutTV/netbird-dsm 提交 5efc24c。NetBird 核心版本為 0.81.2，套件版本為 0.81.2-2。本專案與 Synology、NetBird 均無隸屬關係。

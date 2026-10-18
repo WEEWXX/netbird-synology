@@ -1,5 +1,7 @@
 # NetBird pour Synology
 
+[Documentation en ligne](https://weewxx.github.io/netbird-synology/fr/)
+
 [English](../README.md) · [简体中文](README.zh-CN.md) · [繁體中文](README.zh-TW.md) · [Deutsch](README.de.md) · Français · [日本語](README.ja.md)
 
 Paquet non officiel maintenu par la communauté, basé sur TechHutTV/netbird-dsm, commit 5efc24c. Version du client NetBird : 0.81.2 ; version du paquet : 0.81.2-2. Ce projet est indépendant de Synology et de NetBird.
