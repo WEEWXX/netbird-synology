@@ -100,7 +100,7 @@
   "updates.available": "バージョン {version} を利用できます。",
   "updates.unconfigured": "パッケージの更新元が設定されていません。",
   "updates.failed": "更新を確認できません。後でもう一度試すか、パッケージ センターを使用してください。",
-  "updates.instructions": "DSM のパッケージ センターで更新してください。登録情報と接続設定は保持されます。更新中は VPN 接続が一時的に切断されます。",
+  "updates.instructions": "パッケージソースを設定すると、DSM のパッケージセンターからオンラインで更新できます。この画面では更新の確認と SPK のダウンロードができます。インストールは DSM が行い、更新中は VPN 接続が一時的に切断されます。",
   "updates.release": "リリースノートとダウンロード",
   "controls.https": "接続を操作するには、HTTPS で DSM を開いてください。",
   "controls.startFirst": "先にパッケージ センターで NetBird を起動してください。",
@@ -194,5 +194,9 @@
   "peers.partial.one": "{total} 台中 {shown} 台を表示",
   "peers.partial.other": "{total} 台中 {shown} 台を表示",
   "preferences.title": "表示設定",
-  "controls.title": "接続操作"
+  "controls.title": "接続操作",
+  "updates.download": "SPK をダウンロード",
+  "updates.published": "公開日：{date}",
+  "updates.size": "パッケージサイズ：{size} MiB",
+  "updates.noNotes": "このバージョンのリリースノートはありません。"
 }

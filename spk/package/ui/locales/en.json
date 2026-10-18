@@ -100,7 +100,7 @@
   "updates.available": "Version {version} is available.",
   "updates.unconfigured": "The package update source is not configured.",
   "updates.failed": "Unable to check for updates. Try again later or use Package Center.",
-  "updates.instructions": "Install updates in DSM Package Center. Enrollment and connection settings are preserved; the VPN briefly disconnects during upgrade.",
+  "updates.instructions": "Updates can be downloaded online through DSM Package Center once the package source is configured. This page checks versions and provides SPK downloads; installation is handled by DSM. The VPN briefly disconnects during upgrade.",
   "updates.release": "Release notes and downloads",
   "controls.https": "Open DSM over HTTPS to use connection controls.",
   "controls.startFirst": "Start NetBird in Package Center to use connection controls.",
@@ -194,5 +194,9 @@
   "peers.partial.one": "Showing {shown} of {total} peers",
   "peers.partial.other": "Showing {shown} of {total} peers",
   "preferences.title": "Display preferences",
-  "controls.title": "Connection controls"
+  "controls.title": "Connection controls",
+  "updates.download": "Download SPK",
+  "updates.published": "Published: {date}",
+  "updates.size": "Package size: {size} MiB",
+  "updates.noNotes": "No release notes were provided."
 }

@@ -100,7 +100,7 @@
   "updates.available": "有新版本 {version} 可用。",
   "updates.unconfigured": "尚未配置套件更新源。",
   "updates.failed": "无法检查更新，请稍后重试或使用套件中心。",
-  "updates.instructions": "请在 DSM 套件中心安装更新。注册信息和连接设置会保留，升级期间 VPN 将短暂断开。",
+  "updates.instructions": "配置套件源后，可通过 DSM 套件中心在线更新。本页提供版本检查和 SPK 下载，安装由 DSM 完成；升级期间 VPN 会短暂断开。",
   "updates.release": "更新说明与下载",
   "controls.https": "请通过 HTTPS 打开 DSM 后再操作连接。",
   "controls.startFirst": "请先在套件中心启动 NetBird。",
@@ -194,5 +194,9 @@
   "peers.partial.one": "显示 {total} 个节点中的 {shown} 个",
   "peers.partial.other": "显示 {total} 个节点中的 {shown} 个",
   "preferences.title": "显示偏好",
-  "controls.title": "连接操作"
+  "controls.title": "连接操作",
+  "updates.download": "下载 SPK 安装包",
+  "updates.published": "发布时间：{date}",
+  "updates.size": "安装包大小：{size} MiB",
+  "updates.noNotes": "此版本未提供更新说明。"
 }

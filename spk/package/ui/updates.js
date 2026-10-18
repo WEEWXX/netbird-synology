@@ -16,7 +16,12 @@
   const filename='netbird_'+version+'_synology_'+config.arch+'.spk';
   const asset=(release.assets||[]).find(a=>a.name===filename);
   if(!asset||asset.browser_download_url!==origin+'download/v'+version+'/'+filename)throw Error('Missing compatible package');
-  return {version,available:compare(version,config.version)>0,url:release.html_url,download:asset.browser_download_url};
+  const date=typeof release.published_at==='string'?new Date(release.published_at):null;
+  return {version,available:compare(version,config.version)>0,url:release.html_url,download:asset.browser_download_url,
+   title:typeof release.name==='string'?release.name.slice(0,200):version,
+   notes:typeof release.body==='string'?release.body.slice(0,12000):'',
+   published:date&&Number.isFinite(date.getTime())?date.toISOString():'',
+   size:Number.isSafeInteger(asset.size)&&asset.size>0?asset.size:0};
  }
  const api={compare,offer};if(typeof module!=='undefined'&&module.exports){module.exports=api;return;}
  document.addEventListener('DOMContentLoaded',()=>{
@@ -26,7 +31,18 @@
   function draw(){
    document.getElementById('package-version').textContent=ui.t('updates.current',{version:config?config.version:'—'});
    status.textContent=state==='available'?ui.t('updates.available',{version:result.version}):state==='latest'?ui.t('updates.latest'):state==='unconfigured'?ui.t('updates.unconfigured'):state==='failed'?ui.t('updates.failed'):state==='ready'?'':ui.t('health.checking');
-   notes.hidden=state!=='available';if(result)notes.href=result.url;
+   const available=state==='available';
+   notes.hidden=!available;document.getElementById('update-details').hidden=!available;
+   if(available){
+    notes.href=result.url;
+    document.getElementById('update-name').textContent=result.title||result.version;
+    const metadata=[];
+    if(result.published)metadata.push(ui.t('updates.published',{date:new Intl.DateTimeFormat(ui.locale(),{dateStyle:'medium'}).format(new Date(result.published))}));
+    if(result.size)metadata.push(ui.t('updates.size',{size:ui.number(result.size/1048576)}));
+    document.getElementById('update-meta').textContent=metadata.join(' · ');
+    document.getElementById('update-notes').textContent=result.notes||ui.t('updates.noNotes');
+    document.getElementById('update-download').href=result.download;
+   }
   }
   ui.onChange(draw);
   fetch('release.json',{cache:'no-store',credentials:'same-origin'}).then(r=>{if(!r.ok)throw Error('Metadata unavailable');return r.json();}).then(value=>{

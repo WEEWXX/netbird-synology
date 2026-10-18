@@ -486,20 +486,12 @@ cat <<EOF
     .support-result label { display: block; font-size: 0.75rem; color: var(--text-dim); margin-bottom: 0.5rem; }
     .support-code { font-family: ui-monospace, monospace; font-size: 0.75rem; overflow-wrap: anywhere; user-select: all; }
   </style>
-  <link rel="stylesheet" href="appearance.css?v=1">
+  <link rel="stylesheet" href="appearance.css?v=2">
 </head>
 <body>
   <main>
-    <div class="preferences" aria-label="Display preferences" data-i18n-aria-label="preferences.title">
-      <label><span data-i18n="preferences.language">Language</span>
-        <select id="ui-language"><option value="auto" data-i18n="preferences.auto">Automatic</option><option value="en">English</option><option value="zh-CN">简体中文</option><option value="zh-TW">繁體中文</option><option value="de">Deutsch</option><option value="fr">Français</option><option value="ja">日本語</option></select>
-      </label>
-      <label><span data-i18n="preferences.theme">Appearance</span>
-        <select id="ui-theme"><option value="system" data-i18n="preferences.system">Follow system</option><option value="light" data-i18n="preferences.light">Light</option><option value="dark" data-i18n="preferences.dark">Dark</option></select>
-      </label>
-    </div>
-
-    <div class="brand">
+    <header class="topbar">
+<div class="brand">
       <svg viewBox="0 0 31 23" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
         <path d="M21.4631 0.523438C17.8173 0.857913 16.0028 2.95675 15.3171 4.01871L4.66406 22.4734H17.5163L30.1929 0.523438H21.4631Z" fill="#F68330"/>
         <path d="M17.5265 22.4737L0 3.88525C0 3.88525 19.8177 -1.44128 21.7493 15.1738L17.5265 22.4737Z" fill="#F68330"/>
@@ -507,6 +499,15 @@ cat <<EOF
       </svg>
       NetBird
     </div>
+<div class="preferences" aria-label="Display preferences" data-i18n-aria-label="preferences.title">
+      <label><span data-i18n="preferences.language">Language</span>
+        <select id="ui-language"><option value="auto" data-i18n="preferences.auto">Automatic</option><option value="en">English</option><option value="zh-CN">简体中文</option><option value="zh-TW">繁體中文</option><option value="de">Deutsch</option><option value="fr">Français</option><option value="ja">日本語</option></select>
+      </label>
+      <label><span data-i18n="preferences.theme">Appearance</span>
+        <select id="ui-theme"><option value="system" data-i18n="preferences.system">Follow system</option><option value="light" data-i18n="preferences.light">Light</option><option value="dark" data-i18n="preferences.dark">Dark</option></select>
+      </label>
+    </div>
+    </header>
     <div id="status-content" data-state="${CONTROL_STATE}">
     <div class="header">
       <span class="dot ${DOT_CLASS}"></span>
@@ -612,6 +613,12 @@ $([ -n "${CARD_ROWS}" ] && printf '    <div class="card">\n      <ul class="list
       <button class="btn" id="update-check" type="button" disabled data-i18n="updates.check">Check for updates</button>
       <p id="update-result" role="status"></p>
       <a class="btn" id="update-release" hidden target="_blank" rel="noopener noreferrer" data-i18n="updates.release">Release notes and downloads</a>
+      <div id="update-details" class="update-details" hidden>
+        <h3 id="update-name"></h3>
+        <p id="update-meta"></p>
+        <pre id="update-notes"></pre>
+        <a class="btn btn-primary" id="update-download" target="_blank" rel="noopener noreferrer" data-i18n="updates.download">Download SPK</a>
+      </div>
     </section>
     <div id="external-links" class="actions">
       <a class="btn" href="${DOCS_URL}" target="_blank" rel="noopener" data-i18n="links.docs">${ICON_EXTERNAL}Open Docs</a>
@@ -621,7 +628,7 @@ $([ "${SHOW_DASHBOARD}" = "1" ] && printf '      <a class="btn btn-primary" href
 EOF
 cat <<'HTML'
   <script src="controls.js?v=7" defer></script>
-  <script src="updates.js?v=1" defer></script>
+  <script src="updates.js?v=2" defer></script>
 </body>
 </html>
 HTML

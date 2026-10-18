@@ -12,3 +12,14 @@ test('only stable assets in the configured repository and matching architecture 
  assert.throws(()=>m.offer(release,{repository:'WEEWXX/netbird-dsm',arch:'amd64',version:'0.81.2-1'}));
  assert.throws(()=>m.offer({...release,prerelease:true},{repository:'WEEWXX/netbird-dsm',arch:'arm64',version:'0.81.2-1'}));
 });
+test('update details preserve release text as data and expose the exact compatible download',()=>{
+ const {offer}=require('../spk/package/ui/updates.js');
+ const base='https://github.com/example/client/releases/';
+ const release={tag_name:'v0.81.2-2',draft:false,prerelease:false,html_url:base+'tag/v0.81.2-2',name:'Maintenance release',body:'Fix connection recovery\n<script>alert(1)</script>',published_at:'2026-10-19T00:00:00Z',assets:[{name:'netbird_0.81.2-2_synology_amd64.spk',size:15728640,browser_download_url:base+'download/v0.81.2-2/netbird_0.81.2-2_synology_amd64.spk'}]};
+ const result=offer(release,{repository:'example/client',arch:'amd64',version:'0.81.2-1'});
+ assert.equal(result.title,'Maintenance release');
+ assert.equal(result.notes,release.body);
+ assert.equal(result.published,'2026-10-19T00:00:00.000Z');
+ assert.equal(result.size,15728640);
+ assert.throws(()=>offer({...release,assets:[{...release.assets[0],browser_download_url:'https://evil.example/a.spk'}]},{repository:'example/client',arch:'amd64',version:'0.81.2-1'}));
+});

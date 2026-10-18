@@ -33,3 +33,12 @@ html:lang(zh-CN) body {font-family:-apple-system,BlinkMacSystemFont,"PingFang SC
 :root[data-theme="light"] .lvl-error {color:#b81d35;}
 .value {white-space:normal;overflow-wrap:anywhere;line-height:1.5;}
 .label {line-height:1.5;}
+
+.topbar {display:flex;align-items:center;justify-content:space-between;gap:1.25rem;margin-bottom:1.5rem;}
+.topbar .brand,.topbar .preferences {margin:0;}
+.topbar .brand {flex-shrink:0;}
+.update-details {border-top:1px solid var(--border);margin-top:1rem;padding-top:1rem;}
+.update-details h3 {font-size:.95rem;margin:0 0 .5rem;}
+.update-details pre {white-space:pre-wrap;overflow-wrap:anywhere;font-family:inherit;max-height:18rem;overflow:auto;font-size:.85rem;line-height:1.65;}
+.update-details[hidden] {display:none;}
+@media(max-width:620px) {.topbar{flex-wrap:wrap;gap:1rem;}.topbar .preferences{gap:.6rem;}.topbar .preferences label{flex:0 1 auto;}}

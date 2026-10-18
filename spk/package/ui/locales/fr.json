@@ -100,7 +100,7 @@
   "updates.available": "La version {version} est disponible.",
   "updates.unconfigured": "La source de mise à jour du paquet n’est pas configurée.",
   "updates.failed": "Impossible de rechercher les mises à jour. Réessayez plus tard ou utilisez le Centre de paquets.",
-  "updates.instructions": "Installez les mises à jour dans le Centre de paquets DSM. L’inscription et les paramètres sont conservés ; le VPN est brièvement déconnecté pendant la mise à jour.",
+  "updates.instructions": "Une fois la source de paquets configurée, les mises à jour se téléchargent en ligne via le Centre de paquets DSM. Cette page vérifie les versions et propose le fichier SPK ; DSM assure l’installation. La connexion VPN sera brièvement interrompue.",
   "updates.release": "Notes de version et téléchargements",
   "controls.https": "Ouvrez DSM en HTTPS pour gérer la connexion.",
   "controls.startFirst": "Démarrez d’abord NetBird dans le Centre de paquets.",
@@ -194,5 +194,9 @@
   "peers.partial.one": "Affichage de {shown} pair sur {total}",
   "peers.partial.other": "Affichage de {shown} pairs sur {total}",
   "preferences.title": "Préférences d’affichage",
-  "controls.title": "Commandes de connexion"
+  "controls.title": "Commandes de connexion",
+  "updates.download": "Télécharger le SPK",
+  "updates.published": "Publié le {date}",
+  "updates.size": "Taille du paquet : {size} Mio",
+  "updates.noNotes": "Aucune note de version disponible."
 }
