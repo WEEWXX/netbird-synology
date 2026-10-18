@@ -1,5 +1,7 @@
 # NetBird for Synology
 
+English · [简体中文](docs/README.zh-CN.md) · [繁體中文](docs/README.zh-TW.md) · [Deutsch](docs/README.de.md) · [Français](docs/README.fr.md) · [日本語](docs/README.ja.md)
+
 Community maintenance of [TechHutTV/netbird-dsm](https://github.com/TechHutTV/netbird-dsm), based on upstream commit `5efc24c`. This project is independent of Synology and NetBird. Original networking, DSM authentication and enrollment behavior are retained. Packaging base: `TechHutTV/netbird-dsm@5efc24c`; core: `netbirdio/netbird@v0.81.2`; community package: `0.81.2-2`.
 
 ## Version 0.81.2-2
