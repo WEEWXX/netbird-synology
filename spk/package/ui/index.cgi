@@ -628,7 +628,7 @@ $([ "${SHOW_DASHBOARD}" = "1" ] && printf '      <a class="btn btn-primary" href
 EOF
 cat <<'HTML'
   <script src="controls.js?v=7" defer></script>
-  <script src="updates.js?v=2" defer></script>
+  <script src="updates.js?v=3" defer></script>
 </body>
 </html>
 HTML

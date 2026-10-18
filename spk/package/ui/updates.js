@@ -23,11 +23,22 @@
    published:date&&Number.isFinite(date.getTime())?date.toISOString():'',
    size:Number.isSafeInteger(asset.size)&&asset.size>0?asset.size:0};
  }
- const api={compare,offer};if(typeof module!=='undefined'&&module.exports){module.exports=api;return;}
+ const DAY=24*60*60*1000;
+ function nextDelay(last,now=Date.now()){
+  return typeof last==='number'&&Number.isFinite(last)&&last>0&&last<=now?Math.max(0,DAY-(now-last)):0;
+ }
+ const api={compare,offer,DAY,nextDelay};if(typeof module!=='undefined'&&module.exports){module.exports=api;return;}
  document.addEventListener('DOMContentLoaded',()=>{
   const ui=root.NetBirdUI,button=document.getElementById('update-check'),status=document.getElementById('update-result'),notes=document.getElementById('update-release');
   if(!button)return;
-  let config=null,state='loading',result=null;
+  let config=null,state='loading',result=null,last=null,scheduleTimer=null;
+  function storageKey(){return 'netbird.update.'+[config.repository,config.arch,config.version].join(':');}
+  function readCache(){try{return JSON.parse(localStorage.getItem(storageKey()))||{};}catch(_){return {};}}
+  function saveCache(value){try{localStorage.setItem(storageKey(),JSON.stringify(value));}catch(_){/* Session scheduling still works. */}}
+  function schedule(){
+   clearTimeout(scheduleTimer);
+   if(config&&config.repository)scheduleTimer=setTimeout(()=>check(false),Math.max(1000,nextDelay(last)));
+  }
   function draw(){
    document.getElementById('package-version').textContent=ui.t('updates.current',{version:config?config.version:'—'});
    status.textContent=state==='available'?ui.t('updates.available',{version:result.version}):state==='latest'?ui.t('updates.latest'):state==='unconfigured'?ui.t('updates.unconfigured'):state==='failed'?ui.t('updates.failed'):state==='ready'?'':ui.t('health.checking');
@@ -48,10 +59,20 @@
   fetch('release.json',{cache:'no-store',credentials:'same-origin'}).then(r=>{if(!r.ok)throw Error('Metadata unavailable');return r.json();}).then(value=>{
    parts(value.version);config=value;
    state=value.repository?'ready':'unconfigured';button.disabled=!value.repository;draw();
-   if(state==='ready')status.textContent='';
+   if(state==='ready'){
+    const cache=readCache();last=cache.checked;
+    if(cache.release){try{result=offer(cache.release,config);state=result.available?'available':'latest';}catch(_){last=null;}}
+    else if(nextDelay(last)>0)state='failed';
+    draw();check(false);
+   }
   }).catch(()=>{state='failed';button.disabled=true;draw();});
-  button.addEventListener('click',async()=>{
+  async function check(manual){
+   if(!manual&&config&&config.repository){
+    const cache=readCache();if(typeof cache.checked==='number'&&cache.checked>last)last=cache.checked;
+    if(nextDelay(last)>0){schedule();return;}
+   }
    if(!config||button.disabled)return;
+   last=Date.now();saveCache({checked:last});
    state='loading';result=null;notes.hidden=true;button.disabled=true;draw();
    const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),15000);
    try{
@@ -59,8 +80,11 @@
     const response=await fetch('https://api.github.com/repos/'+config.repository+'/releases/latest',{credentials:'omit',referrerPolicy:'no-referrer',cache:'no-store',headers:{Accept:'application/vnd.github+json'},signal:controller.signal});
     if(!response.ok)throw Error('Release check failed');
     const raw=await response.text();if(raw.length>1024*1024)throw Error('Metadata too large');
-    result=offer(JSON.parse(raw),config);state=result.available?'available':'latest';
-   }catch(_){state='failed';result=null;}finally{clearTimeout(timer);button.disabled=false;draw();}
-  });
+    const release=JSON.parse(raw);
+    result=offer(release,config);state=result.available?'available':'latest';saveCache({checked:last,release});
+   }catch(_){state='failed';result=null;}finally{clearTimeout(timer);button.disabled=false;draw();schedule();}
+  }
+  button.addEventListener('click',()=>check(true));
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)check(false);});
  });
 })(typeof window!=='undefined'?window:globalThis);
