@@ -6,7 +6,11 @@
 #   make clean                                                 # remove artifacts
 
 # Shared default for local builds and CI. Override for packaging revisions.
-VERSION ?= $(shell cat VERSION)
+CORE_VERSION ?= $(shell cat VERSION)
+REVISION ?= $(shell cat REVISION)
+VERSION ?= $(CORE_VERSION)-$(REVISION)
+UPDATE_REPOSITORY ?=
+NODE ?= node
 
 # Architecture (defaults: x86_64 / amd64). NETBIRD_ARCH is auto-derived from
 # SYNOLOGY_ARCH; override either explicitly if needed.
@@ -24,7 +28,7 @@ NETBIRD_SRC ?= .
 GOFLAGS := CGO_ENABLED=0 GOOS=linux GOARCH=$(NETBIRD_ARCH)
 
 # GitHub release URL for downloading pre-built binary
-RELEASE_URL := https://github.com/netbirdio/netbird/releases/download/v$(VERSION)/netbird_$(VERSION)_linux_$(NETBIRD_ARCH).tar.gz
+RELEASE_URL := https://github.com/netbirdio/netbird/releases/download/v$(CORE_VERSION)/netbird_$(CORE_VERSION)_linux_$(NETBIRD_ARCH).tar.gz
 
 # Directories
 SPK_DIR := spk
@@ -47,20 +51,17 @@ check-version:
 
 # Download pre-built NetBird binary from GitHub releases
 download: check-version
-	@echo "Downloading NetBird v$(VERSION) for linux/$(NETBIRD_ARCH)..."
+	@echo "Downloading NetBird v$(CORE_VERSION) for linux/$(NETBIRD_ARCH)..."
 	@mkdir -p $(BIN_DIR) $(BUILD_DIR)
-	curl -fSL "$(RELEASE_URL)" -o $(BUILD_DIR)/netbird.tar.gz
-	tar -xzf $(BUILD_DIR)/netbird.tar.gz -C $(BUILD_DIR)/
-	cp $(BUILD_DIR)/netbird $(BIN_DIR)/netbird.bin
-	chmod +x $(BIN_DIR)/netbird.bin
+	python3 scripts/download-core.py "$(CORE_VERSION)" "$(NETBIRD_ARCH)" "$(BIN_DIR)/netbird.bin"
 	@echo "Binary downloaded to $(BIN_DIR)/netbird.bin"
 
 # Build NetBird from source (requires the toolchain in upstream's go.mod)
 build: check-version
-	@echo "Building NetBird v$(VERSION) from source..."
+	@echo "Building NetBird v$(CORE_VERSION) from source..."
 	@mkdir -p $(BIN_DIR)
 	cd $(NETBIRD_SRC) && $(GOFLAGS) go build \
-		-ldflags "-s -w -X github.com/netbirdio/netbird/version.version=$(VERSION)" \
+		-ldflags "-s -w -X github.com/netbirdio/netbird/version.version=$(CORE_VERSION)" \
 		-o $(abspath $(BIN_DIR))/netbird.bin \
 		./client/
 	@echo "Binary built at $(BIN_DIR)/netbird.bin"
@@ -71,6 +72,8 @@ check-binary:
 
 # Build the SPK package
 package: check-version check-binary
+	python3 scripts/build-presentation.py
+	python3 scripts/package-metadata.py "$(VERSION)" "$(CORE_VERSION)" "$(NETBIRD_ARCH)" "$(UPDATE_REPOSITORY)"
 	@echo "Building SPK package..."
 	@mkdir -p $(BUILD_DIR)
 
@@ -118,6 +121,10 @@ clean:
 
 test:
 	python3 -B -m unittest discover -s tests -v
+	$(NODE) --test tests/*.test.cjs
+	$(NODE) --check spk/package/ui/controls.js
+	$(NODE) --check spk/package/ui/updates.js
+	$(NODE) --check spk/package/ui/presentation.js
 
 help:
 	@echo "NetBird Synology DSM Package Builder"

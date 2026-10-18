@@ -1,0 +1,35 @@
+/* Orange remains the brand accent; status colors retain their meaning. */
+:root { color-scheme:dark; }
+:root[data-theme="light"] {
+ color-scheme:light; --bg:#f5f6f8; --card:#ffffff; --border:#d7dce2;
+ --border-strong:#bbc4ce; --row-border:#e8ebef; --text:#17212d;
+ --text-dim:#536173; --text-soft:#42536a; --netbird:#b84d00;
+ --green:#087b52; --yellow:#926000; --red:#ba263b;
+}
+.preferences { display:flex; flex-wrap:wrap; justify-content:flex-end; gap:.75rem; margin-bottom:1.5rem; }
+.preferences label { display:flex; flex-wrap:wrap; align-items:center; gap:.5rem; color:var(--text-dim); font-size:.8rem; }
+.preferences select { color:var(--text);background:var(--card);border:1px solid var(--border);border-radius:5px;padding:.45rem;max-width:100%; }
+:root[data-theme="light"] .btn,:root[data-theme="light"] input,:root[data-theme="light"] select,:root[data-theme="light"] pre {background:var(--card);color:var(--text);border-color:var(--border);}
+:root[data-theme="light"] .btn-primary {background:#b84d00;color:#fff;}
+:root[data-theme="light"] .header .state-connected {color:var(--green);}
+:root[data-theme="light"] .header .state-disconnected {color:var(--red);}
+:root[data-theme="light"] .header .state-needslogin {color:var(--yellow);}
+.btn {white-space:normal;overflow-wrap:anywhere;line-height:1.5;}
+body {line-height:1.5;}
+html:lang(ja) body {font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif;line-break:strict;}
+html:lang(zh-TW) body {font-family:-apple-system,BlinkMacSystemFont,"PingFang TC","Microsoft JhengHei",sans-serif;}
+html:lang(zh-CN) body {font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;}
+.health-grid strong {overflow-wrap:anywhere;}
+@media(max-width:620px) {
+ body{padding:1.25rem .85rem 2rem;}.preferences{justify-content:flex-start;}.preferences label{flex:1 1 12rem;}
+ .list li{align-items:flex-start;flex-wrap:wrap;}.list .value{overflow-wrap:anywhere;}.health-grid{grid-template-columns:1fr;gap:.75rem;}
+ .control-actions,.actions{flex-wrap:wrap;}.peer-scroll{overflow-x:auto;}
+}
+:root[data-theme="light"] .btn:hover {background:#fff0e5;color:#17212d;}
+:root[data-theme="light"] .btn-primary:hover {background:#963e00;color:#fff;}
+:root[data-theme="light"] .server-options input:checked + span {background:#fff0e5;}
+:root[data-theme="light"] .lvl-info {color:#1756a9;}
+:root[data-theme="light"] .lvl-warn {color:#8a5d00;}
+:root[data-theme="light"] .lvl-error {color:#b81d35;}
+.value {white-space:normal;overflow-wrap:anywhere;line-height:1.5;}
+.label {line-height:1.5;}

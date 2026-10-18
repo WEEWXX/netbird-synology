@@ -1,0 +1,52 @@
+name: Check upstream NetBird
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 * * * *'
+permissions:
+  contents: read
+concurrency:
+  group: upstream-sync
+  cancel-in-progress: false
+jobs:
+  propose:
+    if: vars.ENABLE_UPSTREAM_SYNC == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - name: Detect stable upstream
+        id: upstream
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          value=$(python3 scripts/sync-upstream.py)
+          echo "version=$value" >> "$GITHUB_OUTPUT"
+      - name: Test and validate before proposing
+        if: steps.upstream.outputs.version != ''
+        run: |
+          make test
+          for arch in x86_64 aarch64; do
+            make download package SYNOLOGY_ARCH="$arch" UPDATE_REPOSITORY="$GITHUB_REPOSITORY"
+          done
+      - name: Open update proposal
+        if: steps.upstream.outputs.version != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          UPSTREAM: ${{ steps.upstream.outputs.version }}
+        run: |
+          set -euo pipefail
+          branch="automation/netbird-$UPSTREAM"
+          gh auth setup-git
+          if git ls-remote --exit-code --heads origin "$branch" >/dev/null; then exit 0; fi
+          git switch -c "$branch"
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add VERSION REVISION
+          git commit -m "chore: follow NetBird $UPSTREAM"
+          git push origin "$branch"
+          gh pr create --base main --head "$branch" --title "Update NetBird to $UPSTREAM" --body "Track the official stable release. Both architecture builds and DSM compatibility validation are required before stable publication."

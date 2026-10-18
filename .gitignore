@@ -16,3 +16,7 @@ Thumbs.db
 
 # Claude Code
 .claude/
+
+# Generated per-architecture build identity
+spk/package/ui/release.json
+__pycache__/

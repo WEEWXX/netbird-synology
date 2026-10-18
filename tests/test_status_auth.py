@@ -6,6 +6,7 @@ authentication cannot be replaced through request headers or environment flags.
 
 import json
 import os
+import re
 from pathlib import Path
 import shlex
 import shutil
@@ -188,8 +189,8 @@ exit "$TEST_STATUS_EXIT"
     def test_json_status_fields_are_rendered(self):
         _, body, _ = self.request()
         for value in ("private-peer.example", "100.64.0.2/16", "1 / 3", "1 P2P · 0 relayed", "2 / 4", "0.80.0", "home"):
-            self.assertIn(f'class="value">{value}</span>', body)
-        self.assertIn('class="value">Not reported</span>', body)
+            self.assertRegex(body, r'class="value"[^>]*>' + re.escape(value) + r'</span>')
+        self.assertRegex(body, r'class="value"[^>]*>Not reported</span>')
         self.assertNotIn('class="value">None</span>', body)
 
     def test_connection_types_count_connected_peers_only(self):
@@ -209,7 +210,7 @@ exit "$TEST_STATUS_EXIT"
                 self.status["peers"] = {"connected": len(types), "total": len(details), "details": details}
                 self.status_file.write_text(json.dumps(self.status))
                 _, body, _ = self.request()
-                self.assertIn(f'class="value">{expected}</span>', body)
+                self.assertRegex(body, r'class="value"[^>]*>' + re.escape(expected) + r'</span>')
                 self.assertNotIn("<unknown>", body)
                 self.assertEqual(self.cli_args.read_text().splitlines(), ["status --json"])
 
@@ -219,7 +220,7 @@ exit "$TEST_STATUS_EXIT"
                 self.status["peers"] = {"connected": 2, "total": 3, "details": details}
                 self.status_file.write_text(json.dumps(self.status))
                 _, body, _ = self.request()
-                self.assertIn('Connection Types</span>\n          <span class="value">Not reported</span>', body)
+                self.assertRegex(body, r'Connection Types</span>\s*<span class="value"[^>]*>Not reported</span>')
 
     def test_connection_types_with_no_connected_peers(self):
         for details in (None, [], [{"status": "Idle", "connectionType": "-"}]):
@@ -227,7 +228,7 @@ exit "$TEST_STATUS_EXIT"
                 self.status["peers"] = {"connected": 0, "total": 1, "details": details}
                 self.status_file.write_text(json.dumps(self.status))
                 _, body, _ = self.request()
-                self.assertIn('class="value">No connected peers</span>', body)
+                self.assertRegex(body, r'class="value"[^>]*>No connected peers</span>')
 
     def test_explicit_daemon_states(self):
         for state, label in (

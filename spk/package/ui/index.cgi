@@ -9,9 +9,9 @@ if ! DSM_USER=$(/usr/syno/synoman/webman/modules/authenticate.cgi 2>/dev/null) |
     cat <<'HTML'
 <!DOCTYPE html>
 <html lang="en">
-<head><meta charset="utf-8"><title>NetBird — DSM sign-in required</title></head>
+<head><meta charset="utf-8"><title>NetBird — DSM sign-in required</title><script src="locales.js?v=1"></script><script src="presentation.js?v=1"></script></head>
 <body>
-<p>Sign in to <a href="/webman/index.cgi">DSM</a> with an administrator account, then reopen NetBird.</p>
+<p data-i18n="auth.signin">Sign in to DSM with an administrator account, then reopen NetBird.</p><a href="/webman/index.cgi" data-i18n="auth.open">Open DSM</a>
 <script>
 // DSM may open the launcher without a SynoToken. Obtain it through the existing
 // same-origin DSM session; the CGI still validates that session on every request.
@@ -39,7 +39,10 @@ DSM_GROUPS=$(/usr/bin/id -nG -- "${DSM_USER}" 2>/dev/null) || DSM_GROUPS=""
 case " ${DSM_GROUPS} " in
     *" administrators "*) ;;
     *)
-        printf 'Status: 403 Forbidden\r\nContent-Type: text/plain; charset=utf-8\r\nCache-Control: no-store\r\nReferrer-Policy: no-referrer\r\n\r\nDSM administrator access is required.\n'
+        printf 'Status: 403 Forbidden\r\nContent-Type: text/html; charset=utf-8\r\nCache-Control: no-store\r\nReferrer-Policy: no-referrer\r\n\r\n'
+        cat <<'HTML'
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>NetBird</title><script src="locales.js?v=1"></script><script src="presentation.js?v=1"></script></head><body><p data-i18n="error.admin">DSM administrator access is required.</p></body></html>
+HTML
         exit 0
         ;;
 esac
@@ -197,38 +200,38 @@ if [ "${SHOW_DASHBOARD}" = 1 ]; then
 
     CARD_ROWS=$(cat <<ROWS
         <li>
-          <span class="label">${ICON_GLOBE}Domain Name</span>
+          <span class="label" data-i18n="summary.domain">${ICON_GLOBE}Domain Name</span>
           <span class="value">${NB_FQDN}</span>
         </li>
         <li>
-          <span class="label">${ICON_PIN}NetBird IP</span>
+          <span class="label" data-i18n="summary.ip">${ICON_PIN}NetBird IP</span>
           <span class="ip-value">
             <span id="netbird-ip" class="value">${NB_IP}</span>
-            <button id="copy-ip" class="btn btn-copy" type="button" aria-label="Copy IP address" title="Copy IP address" disabled>${ICON_COPY}${ICON_CHECK}</button>
+            <button id="copy-ip" class="btn btn-copy" type="button" aria-label="Copy IP address" data-i18n-aria-label="copy.ip" title="Copy IP address" data-i18n-title="copy.ip" disabled>${ICON_COPY}${ICON_CHECK}</button>
           </span>
         </li>
         <li>
-          <span class="label">${ICON_PEERS}Peers Connected</span>
+          <span class="label" data-i18n="summary.peers">${ICON_PEERS}Peers Connected</span>
           <span class="value">${PEERS}</span>
         </li>
         <li>
-          <span class="label" title="Connection type is determined separately for each connected peer.">${ICON_PEERS}Connection Types</span>
-          <span class="value">${CONNECTION_TYPES}</span>
+          <span class="label" title="Connection type is determined separately for each connected peer." data-i18n-title="summary.typeHelp" data-i18n="summary.types">${ICON_PEERS}Connection Types</span>
+          <span class="value" data-i18n-message>${CONNECTION_TYPES}</span>
         </li>
         <li>
-          <span class="label">${ICON_RELAY}Relays Available</span>
+          <span class="label" data-i18n="summary.relays">${ICON_RELAY}Relays Available</span>
           <span class="value">${RELAYS}</span>
         </li>
         <li>
-          <span class="label">${ICON_EXIT}Exit Node</span>
-          <span class="value">${EXIT_NODE}</span>
+          <span class="label" data-i18n="summary.exit">${ICON_EXIT}Exit Node</span>
+          <span class="value" data-i18n-message>${EXIT_NODE}</span>
         </li>
         <li>
-          <span class="label">${ICON_NB}Agent Version</span>
+          <span class="label" data-i18n="summary.version">${ICON_NB}Agent Version</span>
           <span class="value">${DAEMON_VER}</span>
         </li>
         <li>
-          <span class="label">${ICON_PROFILE}Profile</span>
+          <span class="label" data-i18n="summary.profile">${ICON_PROFILE}Profile</span>
           <span class="value">${PROFILE}</span>
         </li>
 ROWS
@@ -269,6 +272,8 @@ cat <<EOF
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>NetBird Client - ${NAS_HOSTNAME}</title>
   <link rel="icon" type="image/svg+xml" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 31 23"><path d="M21.46 0.52c-3.65 0.33-5.46 2.43-6.15 3.49L4.66 22.47h12.86L30.19 0.52H21.46z" fill="%23F68330"/><path d="M17.53 22.47L0 3.89s19.82-5.33 21.75 11.28l-4.22 7.3z" fill="%23F68330"/><path d="M14.92 4.71L9.55 14.02l7.97 8.45 4.22-7.32C21.07 9.45 18.29 6.33 14.92 4.7" fill="%23F05252"/></svg>'>
+  <script src="locales.js?v=1"></script>
+  <script src="presentation.js?v=1"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; }
     :root {
@@ -481,9 +486,19 @@ cat <<EOF
     .support-result label { display: block; font-size: 0.75rem; color: var(--text-dim); margin-bottom: 0.5rem; }
     .support-code { font-family: ui-monospace, monospace; font-size: 0.75rem; overflow-wrap: anywhere; user-select: all; }
   </style>
+  <link rel="stylesheet" href="appearance.css?v=1">
 </head>
 <body>
   <main>
+    <div class="preferences" aria-label="Display preferences" data-i18n-aria-label="preferences.title">
+      <label><span data-i18n="preferences.language">Language</span>
+        <select id="ui-language"><option value="auto" data-i18n="preferences.auto">Automatic</option><option value="en">English</option><option value="zh-CN">简体中文</option><option value="zh-TW">繁體中文</option><option value="de">Deutsch</option><option value="fr">Français</option><option value="ja">日本語</option></select>
+      </label>
+      <label><span data-i18n="preferences.theme">Appearance</span>
+        <select id="ui-theme"><option value="system" data-i18n="preferences.system">Follow system</option><option value="light" data-i18n="preferences.light">Light</option><option value="dark" data-i18n="preferences.dark">Dark</option></select>
+      </label>
+    </div>
+
     <div class="brand">
       <svg viewBox="0 0 31 23" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
         <path d="M21.4631 0.523438C17.8173 0.857913 16.0028 2.95675 15.3171 4.01871L4.66406 22.4734H17.5163L30.1929 0.523438H21.4631Z" fill="#F68330"/>
@@ -495,109 +510,118 @@ cat <<EOF
     <div id="status-content" data-state="${CONTROL_STATE}">
     <div class="header">
       <span class="dot ${DOT_CLASS}"></span>
-      <span class="${STATE_CLASS}">${STATUS_LABEL}</span>
+      <span class="${STATE_CLASS}" data-i18n-message>${STATUS_LABEL}</span>
 $([ -n "${META}" ] && printf '      <span class="sep">·</span><span class="meta">%s</span>\n' "${META}")
     </div>
-$([ -n "${HINT}" ] && printf '    <p class="hint">%s</p>\n' "${HINT}")
+$([ -n "${HINT}" ] && printf '    <p class="hint" data-i18n-message>%s</p>\n' "${HINT}")
 $([ -n "${CARD_ROWS}" ] && printf '    <div class="card">\n      <ul class="list">\n%s\n      </ul>\n    </div>\n' "${CARD_ROWS}")
     <p id="copy-ip-feedback" class="copy-feedback" role="status"></p>
     </div>
-    <section class="controls" aria-label="Connection controls">
+    <section class="controls" aria-label="Connection controls" data-i18n-aria-label="controls.title">
       <p id="controls-unavailable" class="notice" role="status" hidden></p>
       <div class="control-actions">
-        <button id="connect" class="btn btn-primary" type="button" hidden disabled>Connect</button>
-        <button id="disconnect" class="btn" type="button" hidden disabled>Disconnect</button>
+        <button id="connect" class="btn btn-primary" type="button" hidden disabled data-i18n="controls.connect">Connect</button>
+        <button id="disconnect" class="btn" type="button" hidden disabled data-i18n="controls.disconnect">Disconnect</button>
       </div>
-      <p id="disconnect-note" class="control-note" hidden>Disconnecting keeps your enrollment and leaves the service running.</p>
+      <p id="disconnect-note" class="control-note" hidden data-i18n="controls.disconnectNote">Disconnecting keeps your enrollment and leaves the service running.</p>
       <form id="enroll-form" class="card enrollment" autocomplete="off" hidden>
-        <h2>Connect this NAS</h2>
-        <p>Use a setup key from your NetBird dashboard to join your network.</p>
+        <h2 data-i18n="controls.enrollTitle">Connect this NAS</h2>
+        <p data-i18n="controls.enrollHelp">Use a setup key from your NetBird dashboard to join your network.</p>
         <fieldset id="enroll-fields" disabled>
           <fieldset class="server-choice">
-            <legend>Management server</legend>
+            <legend data-i18n="controls.server">Management server</legend>
             <div class="server-options">
-              <label><input id="server-cloud" type="radio" name="server-kind" value="cloud" checked><span>NetBird Cloud</span></label>
-              <label><input id="server-self-hosted" type="radio" name="server-kind" value="self-hosted"><span>Self-hosted</span></label>
+              <label><input id="server-cloud" type="radio" name="server-kind" value="cloud" checked><span data-i18n="controls.cloud">NetBird Cloud</span></label>
+              <label><input id="server-self-hosted" type="radio" name="server-kind" value="self-hosted"><span data-i18n="controls.selfHosted">Self-hosted</span></label>
             </div>
           </fieldset>
           <div id="management-field" hidden>
-            <label for="management-url">Management URL</label>
+            <label for="management-url" data-i18n="controls.serverURL">Management URL</label>
             <input id="management-url" type="url" placeholder="https://netbird.example.com" maxlength="2048" spellcheck="false" autocomplete="off" disabled>
           </div>
-          <label for="setup-key">Setup key</label>
+          <label for="setup-key" data-i18n="controls.setupKey">Setup key</label>
           <input id="setup-key" type="password" required minlength="16" maxlength="256" autocomplete="off" spellcheck="false" autocapitalize="none" aria-describedby="setup-key-hint">
-          <small id="setup-key-hint">The key is sent only for enrollment and is not saved by this page.</small>
-          <button id="enroll" class="btn btn-primary" type="submit">Enroll and connect</button>
+          <small id="setup-key-hint" data-i18n="controls.keyHelp">The key is sent only for enrollment and is not saved by this page.</small>
+          <button id="enroll" class="btn btn-primary" type="submit" data-i18n="controls.enroll">Enroll and connect</button>
         </fieldset>
       </form>
       <p id="control-message" class="control-message" role="status" aria-live="polite"></p>
       <noscript><p class="control-note">Enable JavaScript to use connection controls and refresh status, or use the NetBird CLI.</p></noscript>
     </section>
     <section class="card health" aria-labelledby="health-title">
-      <h2 id="health-title">Connection health</h2>
+      <h2 id="health-title" data-i18n="health.title">Connection health</h2>
       <div class="health-grid">
-        <div><span>Management</span><strong id="health-management">Checking…</strong></div>
-        <div><span>Signal</span><strong id="health-signal">Checking…</strong></div>
-        <div><span>Relays</span><strong id="health-relays">Checking…</strong></div>
+        <div><span data-i18n="health.management">Management</span><strong id="health-management" data-i18n="health.checking">Checking…</strong></div>
+        <div><span data-i18n="health.signal">Signal</span><strong id="health-signal" data-i18n="health.checking">Checking…</strong></div>
+        <div><span data-i18n="health.relays">Relays</span><strong id="health-relays" data-i18n="health.checking">Checking…</strong></div>
       </div>
-      <p id="details-message" class="detail-note" role="status">Loading connection details…</p>
+      <p id="details-message" class="detail-note" role="status" data-i18n="health.loading">Loading connection details…</p>
     </section>
     <details id="peers" class="log">
-      <summary><span class="left">${ICON_PEERS}Peers <span id="peer-count"></span></span>${ICON_CHEV}</summary>
-      <p id="peer-empty" class="peer-empty">Loading peer details…</p>
+      <summary><span class="left" data-i18n="peers.title">${ICON_PEERS}Peers <span id="peer-count"></span></span>${ICON_CHEV}</summary>
+      <p id="peer-empty" class="peer-empty" data-i18n="peers.loading">Loading peer details…</p>
       <div id="peer-scroll" class="peer-scroll" hidden>
         <table class="peer-table">
-          <thead><tr><th scope="col">Peer / IP</th><th scope="col">Connection</th><th scope="col">Latency</th><th scope="col">Last handshake</th><th scope="col">Received / sent</th></tr></thead>
+          <thead><tr><th scope="col" data-i18n="peers.peerIP">Peer / IP</th><th scope="col" data-i18n="peers.connection">Connection</th><th scope="col" data-i18n="peers.latency">Latency</th><th scope="col" data-i18n="peers.handshake">Last handshake</th><th scope="col" data-i18n="peers.traffic">Received / sent</th></tr></thead>
           <tbody id="peer-rows"></tbody>
         </table>
       </div>
     </details>
     <details id="activity" class="log">
       <summary>
-        <span class="left">${ICON_LOG}Troubleshooting</span>
+        <span class="left" data-i18n="diagnostics.title">${ICON_LOG}Troubleshooting</span>
         ${ICON_CHEV}
       </summary>
       <div class="troubleshooting">
-        <h3>Recent logs</h3>
+        <h3 data-i18n="logs.title">Recent logs</h3>
         <div class="log-tools">
-          <select id="log-filter" aria-label="Filter logs by severity"><option value="all">All levels</option><option value="warnings">Warnings and errors</option><option value="errors">Errors only</option></select>
-          <input id="log-search" type="search" aria-label="Search recent logs" placeholder="Search logs" maxlength="100">
+          <select id="log-filter" aria-label="Filter logs by severity" data-i18n-aria-label="logs.filter"><option value="all" data-i18n="logs.all">All levels</option><option value="warnings" data-i18n="logs.warnings">Warnings and errors</option><option value="errors" data-i18n="logs.errors">Errors only</option></select>
+          <input id="log-search" type="search" aria-label="Search recent logs" data-i18n-aria-label="logs.search" placeholder="Search logs" data-i18n-placeholder="logs.search" maxlength="100">
         </div>
         <pre id="recent-logs">${LOG_HTML}</pre>
         <p id="log-count" class="detail-note">Recent daemon output. Filtered locally in your browser.</p>
-        <h3>Temporary debug logging</h3>
-        <p id="debug-state" class="detail-note">Checking log level…</p>
+        <h3 data-i18n="debug.title">Temporary debug logging</h3>
+        <p id="debug-state" class="detail-note" data-i18n="debug.checking">Checking log level…</p>
         <fieldset id="diagnostics-fields" disabled>
           <div class="tool-row">
-            <button id="debug-start" class="btn" type="button">Enable debug for 10 minutes</button>
-            <button id="debug-stop" class="btn" type="button" hidden>Stop debug logging</button>
+            <button id="debug-start" class="btn" type="button" data-i18n="debug.start">Enable debug for 10 minutes</button>
+            <button id="debug-stop" class="btn" type="button" hidden data-i18n="debug.stop">Stop debug logging</button>
           </div>
-          <h3>Debug bundle</h3>
-          <p class="detail-note">Includes logs, connection status, and system information with NetBird’s strict anonymization enabled. Review downloaded bundles before sharing them.</p>
-          <label class="bundle-destination"><input type="radio" name="bundle-destination" value="support" checked>Upload to NetBird support and get a support code</label>
-          <label class="bundle-destination"><input type="radio" name="bundle-destination" value="local">Download only</label>
-          <p id="bundle-destination-note" class="detail-note">The bundle will be uploaded to NetBird’s support service, including for self-hosted networks.</p>
-          <button id="bundle-create" class="btn" type="button">Create and upload bundle</button>
+          <h3 data-i18n="bundle.title">Debug bundle</h3>
+          <p class="detail-note" data-i18n="bundle.help">Includes logs, connection status, and system information with NetBird’s strict anonymization enabled. Review downloaded bundles before sharing them.</p>
+          <label class="bundle-destination"><input type="radio" name="bundle-destination" value="support" checked><span data-i18n="bundle.upload">Upload to NetBird support and get a support code</span></label>
+          <label class="bundle-destination"><input type="radio" name="bundle-destination" value="local"><span data-i18n="bundle.local">Download only</span></label>
+          <p id="bundle-destination-note" class="detail-note" data-i18n="bundle.uploadNote">The bundle will be uploaded to NetBird’s support service, including for self-hosted networks.</p>
+          <button id="bundle-create" class="btn" type="button" data-i18n="bundle.createUpload">Create and upload bundle</button>
         </fieldset>
         <p id="diagnostic-message" class="control-message" role="status"></p>
         <p id="bundle-message" class="detail-note" role="status"></p>
         <div id="support-result" class="support-result" hidden>
-          <label for="support-code">Support code — send this with your report</label>
+          <label for="support-code" data-i18n="copy.supportCode">Support code — send this with your report</label>
           <output id="support-code" class="support-code"></output>
-          <button id="copy-support-code" class="btn btn-copy" type="button" aria-label="Copy support code" title="Copy support code">${ICON_COPY}${ICON_CHECK}</button>
+          <button id="copy-support-code" class="btn btn-copy" type="button" aria-label="Copy support code" data-i18n-aria-label="copy.code" title="Copy support code" data-i18n-title="copy.code">${ICON_COPY}${ICON_CHECK}</button>
           <p id="support-copy-feedback" class="detail-note" role="status"></p>
         </div>
-        <button id="bundle-download" class="btn" type="button" hidden disabled>Download debug bundle</button>
+        <button id="bundle-download" class="btn" type="button" hidden disabled data-i18n="bundle.download">Download debug bundle</button>
       </div>
     </details>
+    <section class="card updates" style="padding:1rem" aria-labelledby="updates-title">
+      <h2 id="updates-title" data-i18n="updates.title">Software updates</h2>
+      <p id="package-version"></p>
+      <p data-i18n="updates.instructions">Install updates in DSM Package Center. Enrollment and connection settings are preserved; the VPN briefly disconnects during upgrade.</p>
+      <button class="btn" id="update-check" type="button" disabled data-i18n="updates.check">Check for updates</button>
+      <p id="update-result" role="status"></p>
+      <a class="btn" id="update-release" hidden target="_blank" rel="noopener noreferrer" data-i18n="updates.release">Release notes and downloads</a>
+    </section>
     <div id="external-links" class="actions">
-      <a class="btn" href="${DOCS_URL}" target="_blank" rel="noopener">${ICON_EXTERNAL}Open Docs</a>
-$([ "${SHOW_DASHBOARD}" = "1" ] && printf '      <a class="btn btn-primary" href="%s" target="_blank" rel="noopener">%sOpen Dashboard</a>\n' "${DASHBOARD_URL}" "${ICON_EXTERNAL}")
+      <a class="btn" href="${DOCS_URL}" target="_blank" rel="noopener" data-i18n="links.docs">${ICON_EXTERNAL}Open Docs</a>
+$([ "${SHOW_DASHBOARD}" = "1" ] && printf '      <a class="btn btn-primary" href="%s" target="_blank" rel="noopener" data-i18n="links.dashboard">%sOpen Dashboard</a>\n' "${DASHBOARD_URL}" "${ICON_EXTERNAL}")
     </div>
   </main>
 EOF
 cat <<'HTML'
-  <script src="controls.js?v=6" defer></script>
+  <script src="controls.js?v=7" defer></script>
+  <script src="updates.js?v=1" defer></script>
 </body>
 </html>
 HTML

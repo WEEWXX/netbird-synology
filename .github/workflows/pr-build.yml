@@ -6,6 +6,8 @@ on:
     paths:
       - 'Makefile'
       - 'VERSION'
+      - 'REVISION'
+      - 'scripts/**'
       - 'spk/**'
       - 'tests/**'
       - '.github/workflows/pr-build.yml'
@@ -64,7 +66,7 @@ jobs:
       - name: Download NetBird binary (upstream)
         run: |
           make download \
-            VERSION=${{ needs.setup.outputs.upstream }} \
+            CORE_VERSION=${{ needs.setup.outputs.upstream }} \
             SYNOLOGY_ARCH=${{ matrix.synology_arch }} \
             NETBIRD_ARCH=${{ matrix.netbird_arch }}
 
@@ -72,6 +74,8 @@ jobs:
         run: |
           make package \
             VERSION=${{ needs.setup.outputs.pkg }} \
+            CORE_VERSION=${{ needs.setup.outputs.upstream }} \
+            UPDATE_REPOSITORY=${{ github.repository }} \
             SYNOLOGY_ARCH=${{ matrix.synology_arch }} \
             NETBIRD_ARCH=${{ matrix.netbird_arch }}
 
